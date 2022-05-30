@@ -1,7 +1,5 @@
 import TodoMvcPage from '../pageobjects/todomvc.page';
-
-let taskName = 'Task 1';
-let baseUrl = 'https://todomvc.com/examples/vanillajs/';
+import {baseUrl, taskName} from '../config/project/config';
 
 describe('task should be added to the list', () => {
 it('one task', async() => {

@@ -17,6 +17,7 @@
         "yargs": "^17.5.0"
     },
     "scripts": {
-        "wdio": "wdio run test/wdio.conf.ts"
+        "test:env1": "wdio tests/config/wdio.conf.ts --env=env1",
+        "test:env2": "wdio tests/config/wdio.conf.ts --env=env2"
     }
 }

@@ -32,7 +32,7 @@ class TodoMvcPage extends BasePage {
     }
 
     async addTask(text: string){
-        await $(this.#mainInput).setValue(text);
+        await this.mainInput.setValue(text);
         browser.keys("\uE007"); //press Enter
     }
 }
