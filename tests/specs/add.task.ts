@@ -2,7 +2,7 @@ import TodoMvcPage from '../pageobjects/todomvc.page';
 import {baseUrl, taskName} from '../config/project/config';
 
 describe('task should be added to the list', () => {
-it('one task', async() => {
+it('one task is added', async() => {
     await TodoMvcPage.open(baseUrl);
     await TodoMvcPage.addTask(taskName);
 
