@@ -20,6 +20,7 @@
     },
     "scripts": {
         "test:env1": "wdio tests/config/wdio.conf.ts --env=env1",
-        "test:env2": "wdio tests/config/wdio.conf.ts --env=env2"
+        "test:env2": "wdio tests/config/wdio.conf.ts --env=env2",
+        "test:env1:headless": "wdio tests/config/wdio.conf.ts --headless --env=env2"
     }
 }

@@ -3,6 +3,7 @@ import allure from 'allure-commandline'
 import yargs from 'yargs'
 import allureReporter from '@wdio/allure-reporter'
 import {deleteDirectory} from '../../tests/utils/reports'
+import * as expectWDIO from 'expect-webdriverio'
 
 const argv = yargs.argv;
 
@@ -153,7 +154,7 @@ export const config: WebdriverIO.Config = {
     connectionRetryTimeout: 120000,
     //
     // Default request retries count
-    connectionRetryCount: 0,
+    connectionRetryCount: 3,
     //
     // Test runner services
     // Services take over a specific job you don't want to take care of. They enhance
@@ -198,7 +199,9 @@ export const config: WebdriverIO.Config = {
     // See the full list at http://mochajs.org/
     mochaOpts: {
         ui: 'bdd',
-        timeout: 60000
+        timeout: 60000,
+        retries: 1,
+        bail: false
     },
     //
     // =====
@@ -261,7 +264,8 @@ export const config: WebdriverIO.Config = {
      * @param {Array} args arguments that command would receive
      */
     beforeCommand: function (commandName: string, args: any[]) {
-    allureReporter.addEnvironment('Environment', argv.env)
+    allureReporter.addEnvironment('Environment', argv.env);
+    expectWDIO.setOptions({wait: 5000, interval: 500});
     },
     /**
      * Hook that gets executed before the suite starts
