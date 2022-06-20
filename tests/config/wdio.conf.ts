@@ -1,6 +1,12 @@
 import type { Options } from '@wdio/types'
+import allure from 'allure-commandline'
+import yargs from 'yargs'
+import allureReporter from '@wdio/allure-reporter'
+import {deleteDirectory} from '../../tests/utils/reports'
 
-export const config: Options.Testrunner = {
+const argv = yargs.argv;
+
+export const config: WebdriverIO.Config = {
     //
     // ====================
     // Runner Configuration
@@ -86,7 +92,21 @@ export const config: Options.Testrunner = {
         maxInstances: 5,
         //
         browserName: 'chrome',
-        acceptInsecureCerts: true
+        acceptInsecureCerts: true,
+
+        'goog:chromeOptions': {
+        args:
+        argv['headless']
+        ? [
+        '--headless',
+        '--no-sandbox',
+        '--disable-gpu',
+        '--disable-setuid-sandbox',
+        '--disable-infobars',
+        '--disable-idev-shm-usage'
+        ] : []
+        }
+
         // If outputDir is provided WebdriverIO can capture driver session logs
         // it is possible to configure which logTypes to include/exclude.
         // excludeDriverLogs: ['*'], // pass '*' to exclude all driver session logs
@@ -123,7 +143,7 @@ export const config: Options.Testrunner = {
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
-    baseUrl: 'http://localhost',
+    // baseUrl: 'http://localhost',
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 10000,
@@ -161,7 +181,15 @@ export const config: Options.Testrunner = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ['spec'],
+    reporters: [
+    'spec',
+     ['allure', {
+            outputDir: 'allure-results',
+            disableWebdriverStepsReporting: false,
+            disableWebdriverScreenshotsReporting: false,
+            disableMochaHooks: false,
+        }],
+    ],
 
 
     
@@ -185,8 +213,9 @@ export const config: Options.Testrunner = {
      * @param {Object} config wdio configuration object
      * @param {Array.<Object>} capabilities list of capabilities details
      */
-    // onPrepare: function (config, capabilities) {
-    // },
+    onPrepare: function (config, capabilities) {
+      deleteDirectory('allure-results')
+    },
     /**
      * Gets executed before a worker process is spawned and can be used to initialise specific service
      * for that worker as well as modify runtime environments in an async fashion.
@@ -231,8 +260,9 @@ export const config: Options.Testrunner = {
      * @param {String} commandName hook command name
      * @param {Array} args arguments that command would receive
      */
-    // beforeCommand: function (commandName, args) {
-    // },
+    beforeCommand: function (commandName: string, args: any[]) {
+    allureReporter.addEnvironment('Environment', argv.env)
+    },
     /**
      * Hook that gets executed before the suite starts
      * @param {Object} suite suite details
@@ -310,8 +340,27 @@ export const config: Options.Testrunner = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {<Object>} results object containing test results
      */
-    // onComplete: function(exitCode, config, capabilities, results) {
-    // },
+
+     onComplete: function() {
+         const reportError = new Error('Could not generate Allure report')
+         const generation = allure(['generate', 'allure-results', '--clean'])
+
+         return new Promise((resolve, reject) => {
+             const generationTimeout = setTimeout(() => reject(reportError),5000);
+
+             generation.on('exit', function(exitCode: number) {
+                 clearTimeout(generationTimeout);
+
+                 if (exitCode !== 0) {
+                     return reject(reportError);
+                 }
+
+                 console.log('Allure report successfully generated');
+                 resolve();
+             });
+         });
+     },
+
     /**
     * Gets executed when a refresh happens.
     * @param {String} oldSessionId session ID of the old session
