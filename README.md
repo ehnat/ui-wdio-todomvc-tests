@@ -23,3 +23,16 @@ Do/don't stop testing after failure:
    `mochaOpts: {
    bail: false
    },`
+
+Useful information:
+- don't use `foreach` in asynchronous code: https://gist.github.com/joeytwiddle/37d2085425c049629b80956d3c618971 
+
+
+### Bumping up dependencies
+
+To update a specific dependency, it's best to use npm install with a specific version, example:
+`npm install chromedriver@103.0.0 --dev`
+This will automatically bump up the version in package.json, package-lock.json and yarn.lock.
+
+A useful library for checking dependency updates: [npm-check-updates](https://www.npmjs.com/package/npm-check-updates)
+

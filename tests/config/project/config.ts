@@ -10,8 +10,10 @@ const config = lodash.merge(commonConfig, envConfig);
 
 const baseUrl: string = config.baseUrl;
 const taskName: string = config.taskName;
+const tasksNames: string[] = config.tasksNames;
 
 export {
 baseUrl,
-taskName
+taskName,
+tasksNames
 }

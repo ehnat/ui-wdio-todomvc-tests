@@ -43,13 +43,31 @@ class TodoMvcPage extends BasePage {
         browser.keys("\uE007"); //press Enter
     }
 
+    async addTasks(tasksNames: string[]){
+        for (const taskName of tasksNames) {
+          await this.addTask(taskName);
+        }
+    }
+
     async removeFirstTask(){
         await this.firstTask.moveTo();
         await this.deleteButton.click();
     }
 
-    async markTaskAsCompleted(){
+    async removeAllTasks(tasksNumber: number){
+        await Array.from({length: tasksNumber}, async() => {
+            await this.removeFirstTask();
+        });
+    }
+
+    async markFirstTaskAsCompleted(){
         await this.firstTask.$(this.#checkboxForCompleted).click();
+    }
+
+    async markTasksAsCompleted(tasksNumber: number){
+       for (let taskNumber = 0; taskNumber < tasksNumber; taskNumber++) {
+         await this.tasksList[taskNumber].$(this.#checkboxForCompleted).click();
+       }
     }
 
     async modifyTaskByAdding(modifiedText: string){
