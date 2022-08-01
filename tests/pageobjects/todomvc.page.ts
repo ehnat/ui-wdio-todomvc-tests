@@ -18,6 +18,10 @@ class TodoMvcPage extends BasePage {
         return $(this.#mainInput);
     }
 
+    get todoList(): ChainablePromiseElement<WebdriverIO.Element> {
+        return $(this.#todoList);
+    }
+
     get tasksList(): ChainablePromiseArray<Promise<WebdriverIO.Element>> {
         return $(this.#todoList).$$(this.#tasksList);
     }
